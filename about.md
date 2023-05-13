@@ -16,3 +16,19 @@ Adding an extra layer of interactivity, the intensity of the ambient light withi
 With this code, each time you run the script, it will generate 69 unique PNG images for your NFT series. Pressing the 's' or 'S' key during the execution of the script will save the current canvas as an image with the corresponding index.
 
 Please note that you need to ensure you have the required dependencies (p5, canvas, and fs) installed before running the script.
+
+In this optimized version, I've made the following improvements:
+
+Introduced constants for configuration settings to make them easily adjustable.
+
+Created separate functions for generating each NFT and for generating metadata, improving code modularity and readability.
+
+Implemented output and metadata folders creation if they don't exist.
+
+Removed unnecessary repeated code by utilizing loops and function parameters.
+
+Utilized p.frameCount to control the growth rate for animation.
+
+Used relative file paths for saving the generated NFT images and metadata files.
+
+Properly indented the code for improved readability.
