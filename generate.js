@@ -15,42 +15,42 @@ if (!fs.existsSync(METADATA_FOLDER)) {
   fs.mkdirSync(METADATA_FOLDER);
 }
 
+// Generate NFTs
 for (let i = 0; i < NFT_COUNT; i++) {
-  new p5(p => {
-    const canvasWidth = 800;
-    const canvasHeight = 800;
-
-    p.setup = function () {
-      const canvas = createCanvas(canvasWidth, canvasHeight);
-      canvas.parent('canvas-container'); // Replace 'canvas-container' with the ID of your HTML container
+  new p5(sketch => {
+    sketch.setup = () => {
+      const canvasWidth = 800;
+      const canvasHeight = 800;
+      sketch.createCanvas(canvasWidth, canvasHeight);
+      sketch.background(0);
     };
 
-    p.draw = function () {
-      p.background(0);
-      
-      const numShapes = 50;
-      
-      for (let i = 0; i < numShapes; i++) {
-        const shapeSize = p.random(50, 200);
-        const x = p.random(canvasWidth);
-        const y = p.random(canvasHeight);
-        const color = p.color(p.random(255), p.random(255), p.random(255));
-        
-        p.fill(color);
-        p.noStroke();
-        p.rect(x, y, shapeSize, shapeSize);
-      }
-    
+    sketch.draw = () => {
+      // Generate your artwork here
+      // Example: drawing a random rectangle
+      const x = sketch.random(sketch.width);
+      const y = sketch.random(sketch.height);
+      const size = sketch.random(50, 200);
+      const color = sketch.color(
+        sketch.random(255),
+        sketch.random(255),
+        sketch.random(255)
+      );
+
+      sketch.fill(color);
+      sketch.noStroke();
+      sketch.rect(x, y, size, size);
+
       // Save the canvas as an image
       const fileName = `nft-${i}.png`;
       const outputPath = `${OUTPUT_FOLDER}/${fileName}`;
-      const stream = canvas.createPNGStream();
+      const stream = sketch.canvas.createPNGStream();
       const out = fs.createWriteStream(outputPath);
       stream.pipe(out);
-    
+
       // Generate and save metadata
       const metadata = {
-        title: `NFT ${i}`,
+        name: `NFT ${i}`,
         description: 'A unique generative art NFT',
         edition: `Edition ${i}`,
         artist: 'Your Name',
@@ -59,26 +59,8 @@ for (let i = 0; i < NFT_COUNT; i++) {
       const metadataFileName = `metadata-${i}.json`;
       const metadataOutputPath = `${METADATA_FOLDER}/${metadataFileName}`;
       fs.writeFileSync(metadataOutputPath, JSON.stringify(metadata, null, 2));
-    };    
 
-      // Save the canvas as an image
-      const fileName = `nft-${i}.png`;
-      const outputPath = `${OUTPUT_FOLDER}/${fileName}`;
-      const stream = canvas.createPNGStream();
-      const out = fs.createWriteStream(outputPath);
-      stream.pipe(out);
-
-      // Generate and save metadata
-      const metadata = {
-        title: `NFT ${i}`,
-        description: 'A unique generative art NFT',
-        edition: `Edition ${i}`,
-        artist: 'Your Name',
-        // Add more metadata attributes as needed
-      };
-      const metadataFileName = `metadata-${i}.json`;
-      const metadataOutputPath = `${METADATA_FOLDER}/${metadataFileName}`;
-      fs.writeFileSync(metadataOutputPath, JSON.stringify(metadata, null, 2));
+      sketch.noLoop(); // Stop the sketch after generating a single NFT
     };
   });
 }
