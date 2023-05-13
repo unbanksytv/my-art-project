@@ -2,7 +2,9 @@ const p5 = require('p5');
 const { createCanvas } = require('canvas');
 const fs = require('fs');
 
-for (let nftIndex = 0; nftIndex < 69; nftIndex++) {
+const NFT_COUNT = 69; // Number of NFTs in the series
+
+for (let nftIndex = 0; nftIndex < NFT_COUNT; nftIndex++) {
   new p5(p => {
     let canvasWidth = 1600;
     let canvasHeight = 900;
@@ -28,6 +30,14 @@ for (let nftIndex = 0; nftIndex < 69; nftIndex++) {
     
     let noiseScale = 0.02;
 
+    let metadata = {
+      title: `NFT ${nftIndex}`,
+      description: 'A unique generative art NFT',
+      edition: `Edition ${nftIndex + 1}`,
+      artist: 'Your Name',
+      // Add more metadata attributes as needed
+    };
+
     p.setup = function() {
       p.createCanvas(canvasWidth, canvasHeight, p.WEBGL);
       p.pixelDensity(1);
@@ -37,8 +47,8 @@ for (let nftIndex = 0; nftIndex < 69; nftIndex++) {
     p.draw = function() {
       p.background(0);
       let blockSize = 1;
-      let lightIntensity = p.map(p.noise(nftIndex), 0, 1, 0, 255);  // Use Perlin noise for variation
-      let zoom = p.map(p.noise(nftIndex), 0, 1, 0, 2);  // Use Perlin noise for variation
+      let lightIntensity = p.map(p.noise(nftIndex), 0, 1, 0, 255);
+      let zoom = p.map(p.noise(nftIndex), 0, 1, 0, 2);
 
       for (let x = -canvasWidth * zoom; x < canvasWidth * zoom; x += blockSize) {
         for (let y = -canvasHeight * zoom; y < canvasHeight * zoom; y += blockSize) {
@@ -46,11 +56,14 @@ for (let nftIndex = 0; nftIndex < 69; nftIndex++) {
         }
       }
 
-      angle += p.noise(nftIndex) * 0.01;  // Use Perlin noise for variation
-      growth += p.noise(nftIndex) * 0.01;  // Use Perlin noise for variation
+      angle += p.noise(nftIndex) * 0.01;
+      growth += p.noise(nftIndex) * 0.01;
       
       // Save the canvas as an image
       p.saveCanvas(`nft-${nftIndex}`, 'png');
+
+      // Generate metadata JSON
+      generateMetadata();
     };
 
     function drawLine(x, y, size, lightIntensity) {
@@ -70,16 +83,32 @@ for (let nftIndex = 0; nftIndex < 69; nftIndex++) {
       p.stroke(selectedColor[0], selectedColor[1], selectedColor[2]);
       p.beginShape();
       p.vertex(x, y);
+      p
       p.vertex(x + size, y + size);
       p.endShape();
 
       p.pop();
     }
 
+    function generateMetadata() {
+      const metadataFolderPath = 'metadata'; // Folder to store metadata files
+      const metadataFileName = `metadata-${nftIndex}.json`; // Metadata file name
+
+      // Create metadata directory if it doesn't exist
+      if (!fs.existsSync(metadataFolderPath)) {
+        fs.mkdirSync(metadataFolderPath);
+      }
+
+      // Generate metadata JSON
+      const metadataJSON = JSON.stringify(metadata, null, 2);
+
+      // Write metadata JSON to file
+      fs.writeFileSync(`${metadataFolderPath}/${metadataFileName}`, metadataJSON);
+    }
+
     p.keyPressed = function() {
       if (p.key === 's' || p.key === 'S') {
         // Save the canvas as an image
-       
         p.saveCanvas(`nft-${nftIndex}`, 'png');
       }
     };
@@ -88,4 +117,13 @@ for (let nftIndex = 0; nftIndex < 69; nftIndex++) {
     p.setup();
     p.draw();
   });
+}
+const fs = require('fs');
+
+// Specify the folder name
+const folderName = 'metadata';
+
+// Create the folder if it doesn't exist
+if (!fs.existsSync(folderName)) {
+  fs.mkdirSync(folderName);
 }
